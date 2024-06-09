@@ -1,0 +1,12 @@
+<p-menubar>
+    <ng-template pTemplate="start">
+        <h3>AST Viewer</h3>
+    </ng-template>
+    <ng-template pTemplate="end">
+        <p-dropdown
+                [options]="availableParserNames()"
+                [ngModel]="selectedParserName()"
+                (onChange)="store.setParser($event.value)"
+        />
+    </ng-template>
+</p-menubar>

@@ -1,0 +1,10 @@
+h3 {
+  margin: 0;
+}
+
+:host ::ng-deep .p-menubar {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+}

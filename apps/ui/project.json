@@ -22,7 +22,11 @@
             "input": "apps/ui/public"
           }
         ],
-        "styles": ["apps/ui/src/styles.scss"],
+        "styles": [
+			"apps/ui/src/styles.scss",
+			"node_modules/primeng/resources/themes/arya-blue/theme.css",
+			"node_modules/primeng/resources/primeng.min.css"
+		],
         "scripts": []
       },
       "configurations": {
@@ -59,7 +63,10 @@
           "buildTarget": "ui:build:development"
         }
       },
-      "defaultConfiguration": "development"
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/ui/proxy.conf.json"
+      }
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
