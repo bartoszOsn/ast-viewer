@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from './Store';
-import { BehaviorSubject, combineLatest, concat, filter, first, map, Observable, share, shareReplay, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, concat, debounceTime, first, map, Observable, of, share, shareReplay, Subject, switchMap } from 'rxjs';
 import { Resource } from '../infrastructure/Resource';
-import { ParseDTOFailure } from '@ast-viewer/shared';
 import { ParseResult } from './ParseResult';
 
 @Injectable()
@@ -29,13 +28,22 @@ export class StoreImpl extends Store {
 
 	override readonly parseResult$ = combineLatest([
 		this.selectedParserName$,
-		this.setCode$.pipe(filter(code => code.length > 0))
+		this.setCode$
 	])
 		.pipe(
+			debounceTime(500),
 			switchMap(
-				([parser, code]) => this.resource.getParserOutput(parser, code)
+				([parser, code]) => {
+					if (code.length <= 0) {
+						return of(ParseResult.empty())
+					}
+
+					return this.resource.getParserOutput(parser, code)
+						.pipe(
+							map(resultDTO => ParseResult.of(resultDTO))
+						)
+				}
 			),
-			map(resultDTO => ParseResult.of(resultDTO)),
 			share()
 		);
 

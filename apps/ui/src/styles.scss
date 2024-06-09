@@ -7,3 +7,7 @@ html, body {
 *, ::before, ::after {
   box-sizing: border-box;
 }
+
+body {
+  height: 100vh;
+}

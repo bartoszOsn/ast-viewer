@@ -1,9 +1,11 @@
 <app-header />
-<p-splitter>
-    <ng-template pTemplate>
-        <app-code-editor />
-    </ng-template>
-    <ng-template pTemplate>
-        <app-ast-presenter />
-    </ng-template>
-</p-splitter>
+<div class="app-root__content">
+    <p-splitter>
+        <ng-template pTemplate>
+            <app-code-editor />
+        </ng-template>
+        <ng-template pTemplate>
+            <app-ast-presenter />
+        </ng-template>
+    </p-splitter>
+</div>
