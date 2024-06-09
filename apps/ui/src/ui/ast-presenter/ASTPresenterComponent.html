@@ -1,3 +1,8 @@
-<pre>
-{{ astString() }}
-</pre>
+@if (parseResult().isValid()) {
+    <pre>
+        {{ astString() }}
+    </pre>
+} @else if (parseError()) {
+    <p>Error in {{parseError()?.getLocation()?.start?.line}}:{{parseError()?.getLocation()?.start?.column}}</p>
+    <p>&nbsp;{{parseError()?.getError()}}</p>
+}

@@ -3,6 +3,7 @@ import { Store } from './Store';
 import { BehaviorSubject, combineLatest, concat, filter, first, map, Observable, share, shareReplay, Subject, switchMap } from 'rxjs';
 import { Resource } from '../infrastructure/Resource';
 import { ParseDTOFailure } from '@ast-viewer/shared';
+import { ParseResult } from './ParseResult';
 
 @Injectable()
 export class StoreImpl extends Store {
@@ -26,7 +27,7 @@ export class StoreImpl extends Store {
 
     override code$: Observable<string> = this.setCode$.asObservable();
 
-	private readonly parseResult$ = combineLatest([
+	override readonly parseResult$ = combineLatest([
 		this.selectedParserName$,
 		this.setCode$.pipe(filter(code => code.length > 0))
 	])
@@ -34,17 +35,8 @@ export class StoreImpl extends Store {
 			switchMap(
 				([parser, code]) => this.resource.getParserOutput(parser, code)
 			),
+			map(resultDTO => ParseResult.of(resultDTO)),
 			share()
-		);
-
-    override ast$: Observable<unknown | null> = this.parseResult$
-		.pipe(
-			map(result => result.status === 'success' ? result.ast : null)
-		);
-
-	override parseError$: Observable<ParseDTOFailure | null> = this.parseResult$
-		.pipe(
-			map(result => result.status === 'failure' ? result : null)
 		);
 
     override setParser(parserName: string): void {
