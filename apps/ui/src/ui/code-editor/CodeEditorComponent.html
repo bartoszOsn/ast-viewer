@@ -1,1 +1,5 @@
-<textarea [value]="code()" (input)="onInput($event)"></textarea>
+<ngs-code-editor #codeEditor
+                 [theme]="'vs-dark'"
+                 [options]="options"
+                 [codeModel]="codeModel()"
+                 (valueChanged)="onCodeChanged($event)" />
