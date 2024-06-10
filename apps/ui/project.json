@@ -24,7 +24,7 @@
         ],
         "styles": [
 			"apps/ui/src/styles.scss",
-			"node_modules/primeng/resources/themes/lara-dark-blue/theme.css",
+			"node_modules/primeng/resources/themes/aura-dark-blue/theme.css",
 			"node_modules/primeng/resources/primeng.min.css"
 		],
         "scripts": []

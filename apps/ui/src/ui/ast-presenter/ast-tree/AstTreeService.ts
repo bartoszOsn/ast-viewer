@@ -43,7 +43,8 @@ export class AstTreeService {
 				valueLabel: JSON.stringify(value),
 				valueLabelColor: 'var(--text-color-secondary)',
 				highlight: this.isInHighlights(keyPath, highlight),
-			}
+			},
+			style: this.getStyle(keyPath, highlight)
 		}
 	}
 
@@ -58,6 +59,7 @@ export class AstTreeService {
 				valueLabelColor: 'var(--text-color-secondary)',
 				highlight: this.isInHighlights(keyPath, highlight),
 			},
+			style: this.getStyle(keyPath, highlight),
 			children: value.map((item, index) => this.valueToTreeNode(item, [...keyPath, index.toString()], highlight))
 		}
 	}
@@ -73,6 +75,7 @@ export class AstTreeService {
 				valueLabelColor: 'var(--text-color-secondary)',
 				highlight: this.isInHighlights(keyPath, highlight),
 			},
+			style: this.getStyle(keyPath, highlight),
 			children: [...Object.entries(value)].map(([childKey, childValue]) => this.valueToTreeNode(childValue, [...keyPath, childKey], highlight))
 		}
 	}
@@ -91,5 +94,16 @@ export class AstTreeService {
 
 			return true;
 		});
+	}
+
+	private getStyle(path: KeyPath, highlights: Array<KeyPath>): any {
+		if (!this.isInHighlights(path, highlights)) {
+			return {};
+		}
+
+		return {
+			'background-color': 'var(--highlight-bg)',
+			'color': 'var(--highlight-text-color)',
+		};
 	}
 }
