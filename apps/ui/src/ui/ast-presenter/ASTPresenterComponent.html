@@ -1,7 +1,5 @@
 @if (parseResult().isValid()) {
-    <pre>
-        {{ astString() }}
-    </pre>
+    <app-json-presenter [json]="ast()" [highlightedKeys]="[]" />
 } @else if (parseError()) {
     <p>Error in {{parseError()?.getLocation()?.start?.line}}:{{parseError()?.getLocation()?.start?.column}}</p>
     <p>&nbsp;{{parseError()?.getError()}}</p>

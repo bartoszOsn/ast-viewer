@@ -1,0 +1,6 @@
+<p-tree [value]="treeNodes()">
+    <ng-template let-node pTemplate="default">
+        <span>{{node.label}}: </span>
+        <span [ngStyle]="{ color: node.data.valueLabelColor}">{{node.data.valueLabel}}</span>
+    </ng-template>
+</p-tree>
