@@ -2,14 +2,14 @@ import { Component, computed, inject } from '@angular/core';
 import { Store } from '../../domain/Store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ParseResult } from '../../domain/ParseResult';
-import { JsonPresenterComponent } from './json-presenter/JsonPresenterComponent';
+import { AstTreeComponent } from './ast-tree/AstTreeComponent';
 
 @Component({
 	selector: 'app-ast-presenter',
 	templateUrl: './ASTPresenterComponent.html',
 	styleUrl: './ASTPresenterComponent.scss',
 	imports: [
-		JsonPresenterComponent
+		AstTreeComponent
 	],
 	standalone: true
 })

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
-import { JsonPresenterTreeNodeData } from './JsonPresenterTreeNodeData';
+import { AstTreeNodeData } from './AstTreeNodeData';
 import { KeyPath } from './KeyPath';
 import { isPrimitive, Primitive } from '../../../util/primitive';
 
 @Injectable()
-export class JsonPresenterService {
-	objectToTreeNodes(object: Record<any, any>, highlight: Array<KeyPath>): Array<TreeNode<JsonPresenterTreeNodeData>> {
-		const result: Array<TreeNode<JsonPresenterTreeNodeData>> = [];
+export class AstTreeService {
+	objectToTreeNodes(object: Record<any, any>, highlight: Array<KeyPath>): Array<TreeNode<AstTreeNodeData>> {
+		const result: Array<TreeNode<AstTreeNodeData>> = [];
 		for (const key in object) {
 			const value = object[key];
 			const keyPath: KeyPath = [key];
@@ -17,7 +17,7 @@ export class JsonPresenterService {
 		return result;
 	}
 
-	private valueToTreeNode(value: unknown, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<JsonPresenterTreeNodeData> {
+	private valueToTreeNode(value: unknown, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
 		if (isPrimitive(value)) {
 			return this.primitiveValueToNode(value, keyPath, highlight);
 		}
@@ -33,7 +33,7 @@ export class JsonPresenterService {
 		return null as any; // TODO
 	}
 
-	private primitiveValueToNode(value: Primitive, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<JsonPresenterTreeNodeData> {
+	private primitiveValueToNode(value: Primitive, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
 		const key = keyPath[keyPath.length - 1];
 
 		return {
@@ -47,7 +47,7 @@ export class JsonPresenterService {
 		}
 	}
 
-	private arrayValueToNode(value: Array<unknown>, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<JsonPresenterTreeNodeData> {
+	private arrayValueToNode(value: Array<unknown>, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
 		const key = keyPath[keyPath.length - 1];
 
 		return {
@@ -62,7 +62,7 @@ export class JsonPresenterService {
 		}
 	}
 
-	private objectValueToTreeNode(value: Record<any, any>, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<JsonPresenterTreeNodeData> {
+	private objectValueToTreeNode(value: Record<any, any>, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
 		const key = keyPath[keyPath.length - 1];
 
 		return {
