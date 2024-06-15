@@ -6,6 +6,12 @@ import { isPrimitive, Primitive } from '../../util/primitive';
 
 @Injectable()
 export class AstTreeService {
+	private readonly typeToColorMap: Record<string, string> = {
+		'number': 'var(--indigo-700)',
+		'string': 'var(--green-700)',
+		'boolean': 'var(--indigo-700)',
+	};
+
 	objectToTreeNodes(object: Record<any, any>, highlight: Array<KeyPath>): Array<TreeNode<AstTreeNodeData>> {
 		const result: Array<TreeNode<AstTreeNodeData>> = [];
 		for (const key in object) {
@@ -41,7 +47,7 @@ export class AstTreeService {
 			label: key,
 			data: {
 				valueLabel: JSON.stringify(value),
-				valueLabelColor: 'var(--text-color-secondary)',
+				valueLabelColor: this.typeToColorMap[typeof value] ?? 'var(--text-color-secondary)',
 				highlight: this.isInHighlights(keyPath, highlight),
 			},
 			style: this.getStyle(keyPath, highlight)
