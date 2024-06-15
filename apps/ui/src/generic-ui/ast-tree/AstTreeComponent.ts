@@ -5,7 +5,7 @@ import { TreeModule } from 'primeng/tree';
 import { NgStyle } from '@angular/common';
 
 @Component({
-	selector: 'app-json-presenter',
+	selector: 'app-ast-tree',
 	templateUrl: './AstTreeComponent.html',
 	styleUrl: './AstTreeComponent.scss',
 	standalone: true,

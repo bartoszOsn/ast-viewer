@@ -1,0 +1,12 @@
+.p-toolbar-group-left {
+  flex-grow: 1;
+  gap: var(--inline-spacing);
+}
+
+input {
+  flex-grow: 1;
+}
+
+.app-search-toolbar__label {
+  color: var(--text-color-secondary);
+}

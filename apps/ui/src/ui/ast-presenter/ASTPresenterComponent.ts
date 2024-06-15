@@ -3,13 +3,15 @@ import { Store } from '../../domain/Store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ParseResult } from '../../domain/ParseResult';
 import { AstTreeComponent } from '../../generic-ui/ast-tree/AstTreeComponent';
+import { SearchToolbarComponent } from '../../generic-ui/search-toolbar/SearchToolbarComponent';
 
 @Component({
 	selector: 'app-ast-presenter',
 	templateUrl: './ASTPresenterComponent.html',
 	styleUrl: './ASTPresenterComponent.scss',
 	imports: [
-		AstTreeComponent
+		AstTreeComponent,
+		SearchToolbarComponent
 	],
 	standalone: true
 })
