@@ -7,6 +7,7 @@ import { NgStyle } from '@angular/common';
 @Component({
 	selector: 'app-json-presenter',
 	templateUrl: './AstTreeComponent.html',
+	styleUrl: './AstTreeComponent.scss',
 	standalone: true,
 	imports: [
 		TreeModule,
