@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { AstTreeNodeData } from './AstTreeNodeData';
 import { KeyPath } from './KeyPath';
-import { isPrimitive, Primitive } from '../../../util/primitive';
+import { isPrimitive, Primitive } from '../../util/primitive';
 
 @Injectable()
 export class AstTreeService {

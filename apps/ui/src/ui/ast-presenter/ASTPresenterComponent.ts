@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { Store } from '../../domain/Store';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ParseResult } from '../../domain/ParseResult';
-import { AstTreeComponent } from './ast-tree/AstTreeComponent';
+import { AstTreeComponent } from '../../generic-ui/ast-tree/AstTreeComponent';
 
 @Component({
 	selector: 'app-ast-presenter',
