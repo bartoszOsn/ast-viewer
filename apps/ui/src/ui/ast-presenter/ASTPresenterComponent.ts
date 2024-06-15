@@ -20,6 +20,9 @@ export class ASTPresenterComponent {
 
 	readonly parseResult = toSignal(this.store.parseResult$, { initialValue: ParseResult.empty() });
 	readonly ast = computed(() => this.parseResult().asValid().getAst());
+	readonly query = toSignal(this.store.query$, { initialValue: '' });
+	readonly foundNodePaths = toSignal(this.store.foundNodePaths$, { initialValue: [] });
+	readonly focusedFoundNodeIndex = toSignal(this.store.focusedFoundNodeIndex$, { initialValue: 0 });
 
 	readonly parseError = computed(() => this.parseResult().asInvalid());
 }

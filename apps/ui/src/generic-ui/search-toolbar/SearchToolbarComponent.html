@@ -1,7 +1,7 @@
 <p-toolbar>
     <div class="p-toolbar-group-left">
         <input pInputText [value]="query()" (input)="onInput($event)" placeholder="Search query" />
-        <p class="app-search-toolbar__label">{{focused()}} of {{found()}}</p>
+        <p class="app-search-toolbar__label">{{focused() + 1}} of {{found()}}</p>
         <p-buttonGroup>
             <p-button icon="pi pi-angle-up" severity="secondary" (onClick)="onPrev()" />
             <p-button icon="pi pi-angle-down" severity="secondary" (onClick)="onNext()" />

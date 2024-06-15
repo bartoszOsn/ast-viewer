@@ -1,9 +1,11 @@
 @if (parseResult().isValid()) {
     <div class="app-ast-presenter__content">
-        <app-ast-tree [json]="ast()" [highlightedKeys]="[]" />
-        <app-search-toolbar [query]="''"
-                            [found]="0"
-                            [focused]="0"/>
+        <app-ast-tree [json]="ast()" [highlightedKeys]="foundNodePaths()" />
+        <app-search-toolbar [query]="query()"
+                            [found]="foundNodePaths().length"
+                            [focused]="focusedFoundNodeIndex()"
+                            (queryChange)="store.setQuery($event)"
+                            (focusedChange)="store.setFocusedFoundNodeIndex($event)"/>
     </div>
 } @else if (parseResult().isInvalid()) {
     <p>Error in {{parseError().getLocation().start.line}}:{{parseError().getLocation().start.column}}</p>

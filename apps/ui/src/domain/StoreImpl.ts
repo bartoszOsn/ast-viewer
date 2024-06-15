@@ -3,6 +3,8 @@ import { Store } from './Store';
 import { BehaviorSubject, combineLatest, concat, debounceTime, first, map, Observable, of, share, shareReplay, Subject, switchMap } from 'rxjs';
 import { Resource } from '../infrastructure/Resource';
 import { ParseResult } from './ParseResult';
+import { KeyPath } from '../generic-ui/ast-tree/KeyPath';
+import esquery from 'esquery';
 
 @Injectable()
 export class StoreImpl extends Store {
@@ -10,6 +12,8 @@ export class StoreImpl extends Store {
 
 	private readonly setParser$ = new Subject<string>();
 	private readonly setCode$ = new BehaviorSubject<string>('');
+	private readonly setQuery$ = new BehaviorSubject<string>('');
+	private readonly setFocusedFoundNodeIndex$ = new Subject<number>();
 
     override availableParserNames$: Observable<string[]> = this.resource.getAvailableParsers()
 		.pipe(
@@ -47,6 +51,36 @@ export class StoreImpl extends Store {
 			share()
 		);
 
+	override query$: Observable<string> = this.setQuery$.asObservable();
+
+	override readonly foundNodePaths$: Observable<Array<KeyPath>> = combineLatest([
+		this.parseResult$,
+		this.query$
+	])
+		.pipe(
+			map(([result, query]) => {
+				if (query.length <= 0) {
+					return [];
+				}
+
+				if (!result.isValid()) {
+					return [];
+				}
+
+				let esqueryResult;
+				try {
+					esqueryResult = esquery.query(result.getAst() as any, query);
+				} catch (e) {
+					return [];
+				}
+
+				return this.nodesToKeyPaths(esqueryResult, result.getAst());
+			}),
+			share()
+		);
+
+	override focusedFoundNodeIndex$: Observable<number> = this.setFocusedFoundNodeIndex$.asObservable();
+
     override setParser(parserName: string): void {
 		this.setParser$.next(parserName);
     }
@@ -54,4 +88,34 @@ export class StoreImpl extends Store {
     override setCode(code: string): void {
 		this.setCode$.next(code);
     }
+
+	override setQuery(query: string): void {
+		this.setQuery$.next(query);
+	}
+
+	override setFocusedFoundNodeIndex(index: number): void {
+		this.setFocusedFoundNodeIndex$.next(index);
+	}
+
+	private nodesToKeyPaths(nodes: any[], ast: any): Array<KeyPath> {
+		const result: Array<KeyPath> = [];
+
+		const queue: Array<{ ast: unknown, path: KeyPath }> = [{ ast, path: []}];
+
+		while (queue.length > 0) {
+			const { ast, path } = queue.shift()!;
+
+			if (nodes.includes(ast)) {
+				result.push(path);
+			}
+
+			if (typeof ast === 'object' && ast !== null) {
+				for (const [key, value] of Object.entries(ast)) {
+					queue.push({ ast: value, path: [...path, key] });
+				}
+			}
+		}
+
+		return result;
+	}
 }

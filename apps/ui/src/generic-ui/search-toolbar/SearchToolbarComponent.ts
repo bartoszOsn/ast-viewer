@@ -31,10 +31,11 @@ export class SearchToolbarComponent {
 	}
 
 	onPrev(): void {
-		this.focusedChange.emit((this.focused() - 1) % this.found() + 1);
+		const newFocused = this.focused() - 1;
+		this.focusedChange.emit(newFocused < 0 ? this.found() - 1 : newFocused);
 	}
 
 	onNext(): void {
-		this.focusedChange.emit((this.focused() + 1) % this.found() + 1);
+		this.focusedChange.emit((this.focused() + 1) % this.found());
 	}
 }
