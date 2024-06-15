@@ -5,8 +5,33 @@ export class ParseResult {
 		return this instanceof ValidParseResult;
 	}
 
+	asValid(): ValidParseResult {
+		if (this.isValid()) {
+			return this;
+		}
+
+		return new ValidParseResult({});
+	}
+
 	isInvalid(): this is InvalidParseResult {
 		return this instanceof InvalidParseResult;
+	}
+
+	asInvalid(): InvalidParseResult {
+		if (this.isInvalid()) {
+			return this;
+		}
+
+		return new InvalidParseResult('', {
+			start: {
+				line: 0,
+				column: 0
+			},
+			end: {
+				line: 0,
+				column: 0
+			}
+		});
 	}
 
 	static of(dto: ParseDTO): ParseResult {
