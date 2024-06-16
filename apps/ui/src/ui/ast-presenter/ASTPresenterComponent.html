@@ -10,4 +10,8 @@
 } @else if (parseResult().isInvalid()) {
     <p>Error in {{parseError().getLocation().start.line}}:{{parseError().getLocation().start.column}}</p>
     <p>&nbsp;{{parseError().getError()}}</p>
+} @else if (parseResult().isPending()) {
+    <div class="app-ast-presenter__pending">
+        <p-progressSpinner ariaLabel="loading" />
+    </div>
 }

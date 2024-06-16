@@ -34,6 +34,14 @@ export class ParseResult {
 		});
 	}
 
+	isEmpty(): this is EmptyParseResult {
+		return this instanceof EmptyParseResult;
+	}
+
+	isPending(): this is PendingParseResult {
+		return this instanceof PendingParseResult;
+	}
+
 	static of(dto: ParseDTO): ParseResult {
 		if (dto.status === 'success') {
 			return new ValidParseResult(dto.ast);
@@ -47,6 +55,10 @@ export class ParseResult {
 
 	static empty(): ParseResult {
 		return new EmptyParseResult();
+	}
+
+	static pending(): ParseResult {
+		return new PendingParseResult();
 	}
 }
 
@@ -80,3 +92,5 @@ export class InvalidParseResult extends ParseResult {
 }
 
 export class EmptyParseResult extends ParseResult {}
+
+export class PendingParseResult extends ParseResult {}

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from './Store';
-import { BehaviorSubject, combineLatest, concat, debounceTime, first, map, Observable, of, share, shareReplay, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, concat, debounceTime, first, map, Observable, of, share, shareReplay, startWith, Subject, switchMap } from 'rxjs';
 import { Resource } from '../infrastructure/Resource';
 import { ParseResult } from './ParseResult';
 import { KeyPath } from '../generic-ui/ast-tree/KeyPath';
@@ -44,7 +44,8 @@ export class StoreImpl extends Store {
 
 					return this.resource.getParserOutput(parser, code)
 						.pipe(
-							map(resultDTO => ParseResult.of(resultDTO))
+							map(resultDTO => ParseResult.of(resultDTO)),
+							startWith(ParseResult.pending())
 						)
 				}
 			),
