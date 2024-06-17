@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { AstTreeNodeData } from './AstTreeNodeData';
-import { KeyPath } from './KeyPath';
+import { KeyPath, keyPathArrayContains } from './KeyPath';
 import { isPrimitive, Primitive } from '../../util/primitive';
 
 @Injectable()
@@ -12,18 +12,18 @@ export class AstTreeService {
 		'boolean': 'var(--indigo-700)',
 	};
 
-	objectToTreeNodes(object: Record<any, any>, highlight: Array<KeyPath>): Array<TreeNode<AstTreeNodeData>> {
+	objectToTreeNodes(object: Record<any, any>, highlight: Array<KeyPath>, expanded: Array<KeyPath>): Array<TreeNode<AstTreeNodeData>> {
 		const result: Array<TreeNode<AstTreeNodeData>> = [];
 		for (const key in object) {
 			const value = object[key];
 			const keyPath: KeyPath = [key];
-			const treeNode = this.valueToTreeNode(value, keyPath, highlight);
+			const treeNode = this.valueToTreeNode(value, keyPath, highlight, expanded);
 			result.push(treeNode);
 		}
 		return result;
 	}
 
-	private valueToTreeNode(value: unknown, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
+	private valueToTreeNode(value: unknown, keyPath: KeyPath, highlight: Array<KeyPath>, expanded: Array<KeyPath>): TreeNode<AstTreeNodeData> {
 
 		let basicData: TreeNodeBasicData = {
 			valueLabel: '',
@@ -43,12 +43,14 @@ export class AstTreeService {
 			key: keyPath.join('.'),
 			label: keyPath[keyPath.length - 1],
 			data: {
+				keyPath: keyPath,
 				valueLabel: basicData.valueLabel,
 				valueLabelColor: basicData.valueLabelColor,
 				highlight: this.isInHighlights(keyPath, highlight),
 			},
+			expanded: keyPathArrayContains(expanded, keyPath),
 			style: this.getStyle(keyPath, highlight),
-			children: basicData.childrenValues.map(({ key, value }) => this.valueToTreeNode(value, [...keyPath, key], highlight))
+			children: basicData.childrenValues.map(({ key, value }) => this.valueToTreeNode(value, [...keyPath, key], highlight, expanded))
 		}
 	}
 
@@ -77,19 +79,7 @@ export class AstTreeService {
 	}
 
 	private isInHighlights(path: KeyPath, highlights: Array<KeyPath>): boolean {
-		return highlights.some(highlight => {
-			if (highlight.length !== path.length) {
-				return false;
-			}
-
-			for (let i = 0; i < path.length; i++) {
-				if (path[i] !== highlight[i]) {
-					return false;
-				}
-			}
-
-			return true;
-		});
+		return keyPathArrayContains(highlights, path);
 	}
 
 	private getStyle(path: KeyPath, highlights: Array<KeyPath>): any {

@@ -1,8 +1,10 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { AstTreeService } from './AstTreeService';
 import { KeyPath } from './KeyPath';
-import { TreeModule } from 'primeng/tree';
+import { TreeModule, TreeNodeCollapseEvent, TreeNodeExpandEvent } from 'primeng/tree';
 import { NgStyle } from '@angular/common';
+import { keyPathArraySignal } from './keyPathArraySignal';
+import { AstTreeNodeData } from './AstTreeNodeData';
 
 @Component({
 	selector: 'app-ast-tree',
@@ -21,5 +23,14 @@ export class AstTreeComponent {
 	json = input.required<unknown>();
 	highlightedKeys = input.required<Array<KeyPath>>();
 
-	readonly treeNodes = computed(() => this.jsonPresenterService.objectToTreeNodes(this.json() as any, this.highlightedKeys()))
+	expandedKeys = keyPathArraySignal();
+	readonly treeNodes = computed(() => this.jsonPresenterService.objectToTreeNodes(this.json() as any, this.highlightedKeys(), this.expandedKeys.signal()));
+
+	onNodeExpand(event: TreeNodeExpandEvent) {
+		this.expandedKeys.add((event.node.data as AstTreeNodeData).keyPath);
+	}
+
+	onNodeCollapse(event: TreeNodeCollapseEvent) {
+		this.expandedKeys.remove((event.node.data as AstTreeNodeData).keyPath);
+	}
 }

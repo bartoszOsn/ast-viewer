@@ -1,4 +1,4 @@
-<p-tree [value]="treeNodes()">
+<p-tree [value]="treeNodes()" (onNodeExpand)="onNodeExpand($event)" (onNodeCollapse)="onNodeCollapse($event)">
     <ng-template let-node pTemplate="default">
         <span>{{node.label}}: </span>
         <span [ngStyle]="{ color: node.data.valueLabelColor}">{{node.data.valueLabel}}</span>
