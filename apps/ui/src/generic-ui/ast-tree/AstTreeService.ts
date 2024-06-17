@@ -24,65 +24,55 @@ export class AstTreeService {
 	}
 
 	private valueToTreeNode(value: unknown, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
+
+		let basicData: TreeNodeBasicData = {
+			valueLabel: '',
+			valueLabelColor: '',
+			childrenValues: [],
+		}
+
 		if (isPrimitive(value)) {
-			return this.primitiveValueToNode(value, keyPath, highlight);
+			basicData = this.primitiveValueToTreeNodeBasicData(value);
+		} else if (Array.isArray(value)) {
+			basicData = this.arrayValueToTreeNodeBasicData(value);
+		} else if (typeof value === 'object') {
+			basicData = this.objectValueToTreeNodeBasicData(value as Record<any, any>);
 		}
-
-		if (Array.isArray(value)) {
-			return this.arrayValueToNode(value, keyPath, highlight);
-		}
-
-		if (typeof value === 'object') {
-			return this.objectValueToTreeNode(value as any, keyPath, highlight);
-		}
-
-		return null as any; // TODO
-	}
-
-	private primitiveValueToNode(value: Primitive, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
-		const key = keyPath[keyPath.length - 1];
 
 		return {
 			key: keyPath.join('.'),
-			label: key,
+			label: keyPath[keyPath.length - 1],
 			data: {
-				valueLabel: JSON.stringify(value),
-				valueLabelColor: this.typeToColorMap[typeof value] ?? 'var(--text-color-secondary)',
-				highlight: this.isInHighlights(keyPath, highlight),
-			},
-			style: this.getStyle(keyPath, highlight)
-		}
-	}
-
-	private arrayValueToNode(value: Array<unknown>, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
-		const key = keyPath[keyPath.length - 1];
-
-		return {
-			key: keyPath.join('.'),
-			label: key,
-			data: {
-				valueLabel: `Array(${value.length})`,
-				valueLabelColor: 'var(--text-color-secondary)',
+				valueLabel: basicData.valueLabel,
+				valueLabelColor: basicData.valueLabelColor,
 				highlight: this.isInHighlights(keyPath, highlight),
 			},
 			style: this.getStyle(keyPath, highlight),
-			children: value.map((item, index) => this.valueToTreeNode(item, [...keyPath, index.toString()], highlight))
+			children: basicData.childrenValues.map(({ key, value }) => this.valueToTreeNode(value, [...keyPath, key], highlight))
 		}
 	}
 
-	private objectValueToTreeNode(value: Record<any, any>, keyPath: KeyPath, highlight: Array<KeyPath>): TreeNode<AstTreeNodeData> {
-		const key = keyPath[keyPath.length - 1];
-
+	private primitiveValueToTreeNodeBasicData(value: Primitive): TreeNodeBasicData {
 		return {
-			key: keyPath.join('.'),
-			label: key,
-			data: {
-				valueLabel: value['type']  ?? `Object {}`,
-				valueLabelColor: 'var(--text-color-secondary)',
-				highlight: this.isInHighlights(keyPath, highlight),
-			},
-			style: this.getStyle(keyPath, highlight),
-			children: [...Object.entries(value)].map(([childKey, childValue]) => this.valueToTreeNode(childValue, [...keyPath, childKey], highlight))
+			valueLabel: JSON.stringify(value),
+			valueLabelColor: this.typeToColorMap[typeof value] ?? 'var(--text-color-secondary)',
+			childrenValues: [],
+		}
+	}
+
+	private arrayValueToTreeNodeBasicData(value: Array<unknown>): TreeNodeBasicData {
+		return {
+			valueLabel: `Array(${value.length})`,
+			valueLabelColor: 'var(--text-color-secondary)',
+			childrenValues: value.map((item, index) => ({ key: index.toString(), value: item }))
+		}
+	}
+
+	private objectValueToTreeNodeBasicData(value: Record<any, any>): TreeNodeBasicData {
+		return {
+			valueLabel: value['type']  ?? `Object {}`,
+			valueLabelColor: 'var(--text-color-secondary)',
+			childrenValues: [...Object.entries(value)].map(([key, value]) => ({ key, value }))
 		}
 	}
 
@@ -112,4 +102,10 @@ export class AstTreeService {
 			'color': 'var(--highlight-text-color)',
 		};
 	}
+}
+
+interface TreeNodeBasicData {
+	valueLabel: string;
+	valueLabelColor: string;
+	childrenValues: Array<{ key: string, value: unknown }>
 }
