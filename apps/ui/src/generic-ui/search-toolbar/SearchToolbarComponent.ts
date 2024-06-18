@@ -30,12 +30,22 @@ export class SearchToolbarComponent {
 		}
 	}
 
+	onKeydown(event: KeyboardEvent): void {
+		if (event.key === 'Enter') {
+			this.onNext();
+		}
+	}
+
 	onPrev(): void {
 		const newFocused = this.focused() - 1;
 		this.focusedChange.emit(newFocused < 0 ? this.found() - 1 : newFocused);
 	}
 
 	onNext(): void {
-		this.focusedChange.emit((this.focused() + 1) % this.found());
+		if (this.found() > 0) {
+			this.focusedChange.emit((this.focused() + 1) % this.found());
+		}
 	}
+
+	protected readonly onkeydown = onkeydown;
 }
