@@ -1,12 +1,20 @@
 import express from 'express';
 import { parsers } from './parsers';
+import { AvailableParsersDTO } from '@ast-viewer/shared';
 
 const app = express();
 
 app.get('/available-parsers', (req, res) => {
-	const availableParserNames = parsers.map(parser => parser.name);
+	const availableParsersDTO: AvailableParsersDTO = {
+		parsers: parsers.map(parser => ({
+			name: parser.name,
+			language: parser.language,
+			versions: ['1.0.0', '1.0.1'],
+			latestVersion: '1.0.1'
+		}))
+	}
 
-	res.json(availableParserNames);
+	res.json(availableParsersDTO);
 });
 
 app.get('/parse', async (req, res) => {

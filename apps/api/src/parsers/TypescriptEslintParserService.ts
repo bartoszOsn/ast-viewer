@@ -4,6 +4,7 @@ import { ParseDTO } from '@ast-viewer/shared';
 
 export class TypescriptEslintParserService extends Parser {
 	override name = '@typescript-eslint/parser';
+	override language = 'TypeScript';
 
 	override async parse(code: string): Promise<ParseDTO> {
 		try {

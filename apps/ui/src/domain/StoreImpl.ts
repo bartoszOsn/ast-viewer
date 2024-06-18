@@ -32,6 +32,7 @@ export class StoreImpl extends Store {
 
     override availableParserNames$: Observable<string[]> = this.resource.getAvailableParsers()
 		.pipe(
+			map(parsers => parsers.parsers.map(parser => parser.name)),
 			shareReplay(1)
 		);
 

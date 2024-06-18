@@ -1,14 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ParseDTO } from '@ast-viewer/shared';
+import { AvailableParsersDTO, ParseDTO } from '@ast-viewer/shared';
 
 @Injectable({providedIn: 'root'})
 export class Resource {
 	private readonly httpClient = inject(HttpClient);
 
-	getAvailableParsers(): Observable<Array<string>> {
-		return this.httpClient.get<Array<string>>('/api/available-parsers');
+	getAvailableParsers(): Observable<AvailableParsersDTO> {
+		return this.httpClient.get<AvailableParsersDTO>('/api/available-parsers');
 	}
 
 	getParserOutput(parserName: string, code: string): Observable<ParseDTO> {
