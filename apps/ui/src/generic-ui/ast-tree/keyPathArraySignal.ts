@@ -1,4 +1,4 @@
-import { KeyPath, keyPathArrayContains, keyPathEquals } from './KeyPath';
+import { KeyPath, keyPathArrayContains, keyPathEquals, keyPathStartsWith } from './KeyPath';
 import { signal } from '@angular/core';
 
 export function keyPathArraySignal() {
@@ -16,10 +16,27 @@ export function keyPathArraySignal() {
 		keyPathSignal.update(keyPaths => keyPaths.filter(kp => !keyPathEquals(kp, keyPath)));
 	}
 
+	const addRecursive = (keyPath: KeyPath): void => {
+		if (!contains(keyPath)) {
+			const parentKeyPath = keyPath.slice(0, keyPath.length - 1);
+
+			if (parentKeyPath.length > 0) {
+				addRecursive(parentKeyPath);
+			}
+			add(keyPath);
+		}
+	}
+
+	const removeRecursive = (keyPath: KeyPath): void => {
+		keyPathSignal.update(keyPaths => keyPaths.filter(kp => !keyPathStartsWith(kp, keyPath)));
+	}
+
 	return {
 		signal: keyPathSignal.asReadonly(),
 		contains,
 		add,
-		remove
+		remove,
+		addRecursive,
+		removeRecursive
 	}
 }

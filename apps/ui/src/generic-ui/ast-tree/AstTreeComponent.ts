@@ -33,10 +33,10 @@ export class AstTreeComponent {
 	));
 
 	onNodeExpand(event: TreeNodeExpandEvent) {
-		this.expandedKeys.add((event.node.data as AstTreeNodeData).keyPath);
+		this.expandedKeys.addRecursive((event.node.data as AstTreeNodeData).keyPath);
 	}
 
 	onNodeCollapse(event: TreeNodeCollapseEvent) {
-		this.expandedKeys.remove((event.node.data as AstTreeNodeData).keyPath);
+		this.expandedKeys.removeRecursive((event.node.data as AstTreeNodeData).keyPath);
 	}
 }
