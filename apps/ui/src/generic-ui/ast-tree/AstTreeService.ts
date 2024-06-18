@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TreeNode } from 'primeng/api';
 import { AstTreeNodeData } from './AstTreeNodeData';
-import { KeyPath, keyPathArrayContains } from './KeyPath';
+import { KeyPath, keyPathArrayContains, keyPathEquals } from './KeyPath';
 import { isPrimitive, Primitive } from '../../util/primitive';
 
 @Injectable()
@@ -12,18 +12,18 @@ export class AstTreeService {
 		'boolean': 'var(--indigo-700)',
 	};
 
-	objectToTreeNodes(object: Record<any, any>, highlight: Array<KeyPath>, expanded: Array<KeyPath>): Array<TreeNode<AstTreeNodeData>> {
+	objectToTreeNodes(object: Record<any, any>, highlight: Array<KeyPath>, expanded: Array<KeyPath>, focused: KeyPath | undefined): Array<TreeNode<AstTreeNodeData>> {
 		const result: Array<TreeNode<AstTreeNodeData>> = [];
 		for (const key in object) {
 			const value = object[key];
 			const keyPath: KeyPath = [key];
-			const treeNode = this.valueToTreeNode(value, keyPath, highlight, expanded);
+			const treeNode = this.valueToTreeNode(value, keyPath, highlight, expanded, focused);
 			result.push(treeNode);
 		}
 		return result;
 	}
 
-	private valueToTreeNode(value: unknown, keyPath: KeyPath, highlight: Array<KeyPath>, expanded: Array<KeyPath>): TreeNode<AstTreeNodeData> {
+	private valueToTreeNode(value: unknown, keyPath: KeyPath, highlight: Array<KeyPath>, expanded: Array<KeyPath>, focused: KeyPath | undefined): TreeNode<AstTreeNodeData> {
 
 		let basicData: TreeNodeBasicData = {
 			valueLabel: '',
@@ -39,6 +39,7 @@ export class AstTreeService {
 			basicData = this.objectValueToTreeNodeBasicData(value as Record<any, any>);
 		}
 
+		const isFocused = !!focused && keyPathEquals(focused, keyPath);
 		return {
 			key: keyPath.join('.'),
 			label: keyPath[keyPath.length - 1],
@@ -48,9 +49,10 @@ export class AstTreeService {
 				valueLabelColor: basicData.valueLabelColor,
 				highlight: this.isInHighlights(keyPath, highlight),
 			},
+			icon: isFocused ? 'pi pi-star-fill' : undefined,
 			expanded: keyPathArrayContains(expanded, keyPath),
-			style: this.getStyle(keyPath, highlight),
-			children: basicData.childrenValues.map(({ key, value }) => this.valueToTreeNode(value, [...keyPath, key], highlight, expanded))
+			style: this.getStyle(keyPath, highlight, isFocused),
+			children: basicData.childrenValues.map(({ key, value }) => this.valueToTreeNode(value, [...keyPath, key], highlight, expanded, focused))
 		}
 	}
 
@@ -82,7 +84,7 @@ export class AstTreeService {
 		return keyPathArrayContains(highlights, path);
 	}
 
-	private getStyle(path: KeyPath, highlights: Array<KeyPath>): any {
+	private getStyle(path: KeyPath, highlights: Array<KeyPath>, isFocused: boolean): any {
 		if (!this.isInHighlights(path, highlights)) {
 			return {};
 		}
@@ -90,6 +92,11 @@ export class AstTreeService {
 		return {
 			'background-color': 'var(--highlight-bg)',
 			'color': 'var(--highlight-text-color)',
+			// 'animation': isFocused ? 'pulse 0.3s 1' : 'none',
+			'animation-name': isFocused ? 'pulse' : 'none',
+			'animation-duration': '0.1s',
+			'animation-iteration-count': '1',
+			'animation-timing-function': 'ease-out'
 		};
 	}
 }

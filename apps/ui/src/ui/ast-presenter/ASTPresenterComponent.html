@@ -1,6 +1,6 @@
 @if (parseResult().isValid()) {
     <div class="app-ast-presenter__content">
-        <app-ast-tree [json]="ast()" [highlightedKeys]="foundNodePaths()" />
+        <app-ast-tree [json]="ast()" [highlightedKeys]="foundNodePaths()" [focusedKey]="focusedNodePath()" />
         <app-search-toolbar [query]="query()"
                             [found]="foundNodePaths().length"
                             [focused]="focusedFoundNodeIndex()"

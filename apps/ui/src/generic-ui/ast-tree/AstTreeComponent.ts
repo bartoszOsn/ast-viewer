@@ -22,9 +22,15 @@ export class AstTreeComponent {
 
 	json = input.required<unknown>();
 	highlightedKeys = input.required<Array<KeyPath>>();
+	focusedKey = input<KeyPath>();
 
 	expandedKeys = keyPathArraySignal();
-	readonly treeNodes = computed(() => this.jsonPresenterService.objectToTreeNodes(this.json() as any, this.highlightedKeys(), this.expandedKeys.signal()));
+	readonly treeNodes = computed(() => this.jsonPresenterService.objectToTreeNodes(
+		this.json() as any,
+		this.highlightedKeys(),
+		this.expandedKeys.signal(),
+		this.focusedKey()
+	));
 
 	onNodeExpand(event: TreeNodeExpandEvent) {
 		this.expandedKeys.add((event.node.data as AstTreeNodeData).keyPath);

@@ -1,6 +1,21 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from './Store';
-import { BehaviorSubject, combineLatest, concat, debounceTime, first, map, Observable, of, share, shareReplay, startWith, Subject, switchMap } from 'rxjs';
+import {
+	BehaviorSubject,
+	combineLatest,
+	concat,
+	debounceTime,
+	first,
+	map,
+	merge,
+	Observable,
+	of,
+	share,
+	shareReplay,
+	startWith,
+	Subject,
+	switchMap
+} from 'rxjs';
 import { Resource } from '../infrastructure/Resource';
 import { ParseResult } from './ParseResult';
 import { KeyPath } from '../generic-ui/ast-tree/KeyPath';
@@ -80,7 +95,20 @@ export class StoreImpl extends Store {
 			share()
 		);
 
-	override focusedFoundNodeIndex$: Observable<number> = this.setFocusedFoundNodeIndex$.asObservable();
+	override focusedFoundNodeIndex$: Observable<number> = merge(
+		this.setFocusedFoundNodeIndex$,
+		this.foundNodePaths$
+	)
+		.pipe(
+			map((indexOrPath) => {
+				if (typeof indexOrPath === 'number') {
+					return indexOrPath;
+				}
+
+				return -1;
+			}),
+			share()
+	);
 
     override setParser(parserName: string): void {
 		this.setParser$.next(parserName);
