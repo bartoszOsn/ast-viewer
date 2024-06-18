@@ -20,24 +20,26 @@ import { Resource } from '../infrastructure/Resource';
 import { ParseResult } from './ParseResult';
 import { KeyPath } from '../generic-ui/ast-tree/KeyPath';
 import esquery from 'esquery';
+import { ParserPackage } from './ParserPackage';
+import { ParserVersion } from './ParserVersion';
 
 @Injectable()
 export class StoreImpl extends Store {
 	private readonly resource = inject(Resource);
 
-	private readonly setParser$ = new Subject<string>();
+	private readonly setParser$ = new Subject<ParserVersion>();
 	private readonly setCode$ = new BehaviorSubject<string>('');
 	private readonly setQuery$ = new BehaviorSubject<string>('');
 	private readonly setFocusedFoundNodeIndex$ = new Subject<number>();
 
-    override availableParserNames$: Observable<string[]> = this.resource.getAvailableParsers()
+	override availableParsers$: Observable<Array<ParserPackage>> = this.resource.getAvailableParsers()
 		.pipe(
-			map(parsers => parsers.parsers.map(parser => parser.name)),
+			map(dto => dto.parsers.map(parserDto => ParserPackage.fromDTO(parserDto))),
 			shareReplay(1)
 		);
 
-    override selectedParserName$: Observable<string> = concat(
-		this.availableParserNames$.pipe(map(names => names[0]), first()),
+	override selectedParserVersion$: Observable<ParserVersion> = concat(
+		this.availableParsers$.pipe(map(parsers => parsers[0].latestVersion), first()),
 		this.setParser$
 	)
 		.pipe(
@@ -47,7 +49,7 @@ export class StoreImpl extends Store {
     override code$: Observable<string> = this.setCode$.asObservable();
 
 	override readonly parseResult$ = combineLatest([
-		this.selectedParserName$,
+		this.selectedParserVersion$,
 		this.setCode$
 	])
 		.pipe(
@@ -58,7 +60,7 @@ export class StoreImpl extends Store {
 						return of(ParseResult.empty())
 					}
 
-					return this.resource.getParserOutput(parser, code)
+					return this.resource.getParserOutput(parser.name, parser.version, code)
 						.pipe(
 							map(resultDTO => ParseResult.of(resultDTO)),
 							startWith(ParseResult.pending())
@@ -111,11 +113,11 @@ export class StoreImpl extends Store {
 			share()
 	);
 
-    override setParser(parserName: string): void {
-		this.setParser$.next(parserName);
-    }
+	override setParser(parser: ParserVersion) {
+		this.setParser$.next(parser);
+	}
 
-    override setCode(code: string): void {
+	override setCode(code: string): void {
 		this.setCode$.next(code);
     }
 

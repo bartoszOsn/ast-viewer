@@ -11,9 +11,10 @@ export class Resource {
 		return this.httpClient.get<AvailableParsersDTO>('/api/available-parsers');
 	}
 
-	getParserOutput(parserName: string, code: string): Observable<ParseDTO> {
+	getParserOutput(parserName: string, parserVersion: string, code: string): Observable<ParseDTO> {
 		const params = new HttpParams()
 			.set('parser', encodeURIComponent(parserName))
+			.set('parserVersion', encodeURIComponent(parserVersion))
 			.set('code', encodeURIComponent(code));
 
 		return this.httpClient.get<ParseDTO>(`/api/parse`, { params });
