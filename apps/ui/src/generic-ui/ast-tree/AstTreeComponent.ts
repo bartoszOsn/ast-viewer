@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { AstTreeService } from './AstTreeService';
 import { KeyPath } from './KeyPath';
 import { TreeModule, TreeNodeCollapseEvent, TreeNodeExpandEvent } from 'primeng/tree';
@@ -31,6 +31,15 @@ export class AstTreeComponent {
 		this.expandedKeys.signal(),
 		this.focusedKey()
 	));
+
+	constructor() {
+		effect(() => {
+			const focusedKey = this.focusedKey();
+			if (focusedKey && focusedKey.length > 1) {
+				this.expandedKeys.addRecursive(focusedKey.slice(0, focusedKey.length - 1));
+			}
+		}, { allowSignalWrites: true})
+	}
 
 	onNodeExpand(event: TreeNodeExpandEvent) {
 		this.expandedKeys.addRecursive((event.node.data as AstTreeNodeData).keyPath);
