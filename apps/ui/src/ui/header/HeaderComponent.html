@@ -7,6 +7,9 @@
                 [selectionMode]="'single'"
                 [options]="parserNodes()"
                 [ngModel]="selectedParserNode()"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="36"
+                [virtualScrollOptions]="{ scrollHeight: '300px' }"
                 (onNodeSelect)="store.setParser($event.node.data)"
                 (onNodeUnselect)="onUnselect()">
             <ng-template let-node pTemplate="value">
