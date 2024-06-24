@@ -3,10 +3,18 @@
         <h3>AST Viewer</h3>
     </ng-template>
     <ng-template pTemplate="end">
-        <p-dropdown
-                [options]="availableParserNames()"
-                [ngModel]="selectedParserName()"
-                (onChange)="store.setParser($event.value)"
-        />
+        <p-treeSelect
+                [selectionMode]="'single'"
+                [options]="parserNodes()"
+                [ngModel]="selectedParserNode()"
+                [virtualScroll]="true"
+                [virtualScrollItemSize]="36"
+                [virtualScrollOptions]="{ scrollHeight: '300px' }"
+                (onNodeSelect)="store.setParser($event.node.data)"
+                (onNodeUnselect)="onUnselect()">
+            <ng-template let-node pTemplate="value">
+                {{node?.data.name}}{{'@'}}{{node?.data.version}}
+            </ng-template>
+        </p-treeSelect>
     </ng-template>
 </p-menubar>

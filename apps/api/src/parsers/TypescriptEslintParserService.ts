@@ -1,12 +1,17 @@
-import { parse } from '@typescript-eslint/parser';
 import { Parser } from '../Parser';
 import { ParseDTO } from '@ast-viewer/shared';
+import { createResolveDynamicPackage } from '../infrastructure/dynamic-package';
+import { join } from 'path';
 
 export class TypescriptEslintParserService extends Parser {
+	private static readonly resolveDynamicPackage = createResolveDynamicPackage(join(__dirname, 'inner'));
+
 	override name = '@typescript-eslint/parser';
+	override language = 'TypeScript';
 
 	override async parse(code: string): Promise<ParseDTO> {
 		try {
+			const { parse } = await TypescriptEslintParserService.resolveDynamicPackage<any>('@typescript-eslint/parser', '7.12.0');
 			const ast = parse(code, {
 				errorOnTypeScriptSyntacticAndSemanticIssues: false,
 				allowInvalidAST: true,

@@ -31,7 +31,9 @@ export class AstTreeService {
 			childrenValues: [],
 		}
 
-		if (isPrimitive(value)) {
+		if (value === null) {
+			basicData = this.nullValueToTreeNodeBasicData();
+		} else if (isPrimitive(value)) {
 			basicData = this.primitiveValueToTreeNodeBasicData(value);
 		} else if (Array.isArray(value)) {
 			basicData = this.arrayValueToTreeNodeBasicData(value);
@@ -77,6 +79,14 @@ export class AstTreeService {
 			valueLabel: value['type']  ?? `Object {}`,
 			valueLabelColor: 'var(--text-color-secondary)',
 			childrenValues: [...Object.entries(value)].map(([key, value]) => ({ key, value }))
+		}
+	}
+
+	private nullValueToTreeNodeBasicData(): TreeNodeBasicData {
+		return {
+			valueLabel: 'null',
+			valueLabelColor: 'var(--text-color-secondary)',
+			childrenValues: []
 		}
 	}
 
